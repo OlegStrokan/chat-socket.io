@@ -1,7 +1,16 @@
 import React from 'react';
 import socket from '../socket';
+import {Button, makeStyles, TextField} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    padding: '10px 25px'
+  },
+}));
 
 function Chat({ users, messages, userName, roomId, onAddMessage }) {
+  const classes = useStyles();
+
   const [messageValue, setMessageValue] = React.useState('');
   const messagesRef = React.useRef(null);
 
@@ -43,14 +52,17 @@ function Chat({ users, messages, userName, roomId, onAddMessage }) {
           ))}
         </div>
         <form>
-          <textarea
-            value={messageValue}
-            onChange={(e) => setMessageValue(e.target.value)}
-            className="form-control"
-            rows="3"></textarea>
-          <button onClick={onSendMessage} type="button" className="btn btn-primary">
+          <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              onChange={(e) => setMessageValue(e.target.value)}
+              value={messageValue}
+          />
+          <Button onClick={onSendMessage} variant="contained" color="primary" className={classes.button}>
             Отправить
-          </button>
+          </Button>
         </form>
       </div>
     </div>

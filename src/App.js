@@ -6,8 +6,21 @@ import socket from './socket';
 import reducer from './logic/reducer';
 import JoinBlock from './components/JoinBlock';
 import Chat from './components/Chat';
+import {makeStyles} from "@material-ui/core";
+
+const useStyles = makeStyles((theme) => ({
+  wrapper: {
+    backgroundColor: '#f0f5f5',
+    height: '100vh',
+    width: '100%',
+    padding: 0,
+    margin: 0,
+  },
+}));
+
 
 function App() {
+  const classes = useStyles();
   const [state, dispatch] = React.useReducer(reducer, {
     joined: false,
     roomId: null,
@@ -51,7 +64,7 @@ function App() {
   window.socket = socket;
 
   return (
-    <div className="wrapper">
+    <div className={classes.wrapper}>
       {!state.joined ? (
         <JoinBlock onLogin={onLogin} />
       ) : (
