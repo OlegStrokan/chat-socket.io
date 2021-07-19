@@ -1,41 +1,60 @@
-import React, {useState} from 'react';
+import React from 'react';
+import socket from '../socket';
 
-export const Chat = () => {
-    const [messageValue, setMessageValue] = useState('')
+function Chat({ users, messages, userName, roomId, onAddMessage }) {
+    const [messageValue, setMessageValue] = React.useState('');
+    const messagesRef = React.useRef(null);
+
+    const onSendMessage = () => {
+        socket.emit('ROOM:NEW_MESSAGE', {
+            userName,
+            roomId,
+            text: messageValue,
+        });
+        onAddMessage({ userName, text: messageValue });
+        setMessageValue('');
+    };
+
+    React.useEffect(() => {
+        messagesRef.current.scrollTo(0, 99999);
+    }, [messages]);
+
     return (
         <div className="chat">
             <div className="chat-users">
-                <b>Online (1):</b>
-            <ul>
-                <li>Test User</li>
-            </ul>
+                Комната: <b>{roomId}</b>
+                <hr />
+                <b>Онлайн ({users.length}):</b>
+                <ul>
+                    {users.map((name, index) => (
+                        <li key={name + index}>{name}</li>
+                    ))}
+                </ul>
             </div>
-            <div  className="chat-message">
-                <div className="messages">
-                    <div className="message">
-                        <p>Lorem ipsum dolor sit amet</p>
-                        <div>
-                            <span>Test User</span>
+            <div className="chat-messages">
+                <div ref={messagesRef} className="messages">
+                    {messages.map((message) => (
+                        <div className="message">
+                            <p>{message.text}</p>
+                            <div>
+                                <span>{message.userName}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="message">
-                        <p>Lorem ipsum dolor sit amet</p>
-                        <div>
-                            <span>Test User</span>
-                        </div>
-                    </div>
+                    ))}
                 </div>
                 <form>
-                    <textarea
-                    value={messageValue}
-                    onChange={(e) => setMessageValue(e.target.value)}
-                    className="form-control"
-                    rows="3"
-                    ></textarea>
-                    <button type="button">Send</button>
+          <textarea
+              value={messageValue}
+              onChange={(e) => setMessageValue(e.target.value)}
+              className="form-control"
+              rows="3"></textarea>
+                    <button onClick={onSendMessage} type="button" className="btn btn-primary">
+                        Отправить
+                    </button>
                 </form>
             </div>
         </div>
     );
-};
+}
 
+export default Chat;
